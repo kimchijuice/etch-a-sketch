@@ -1,4 +1,26 @@
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+}
+
 #container {
     display: flex;
-    border: 1px;
+    flex-wrap: wrap;
+    width: 100v;
+    justify-content: center;
 }
+
+.grid-item {
+    border: 1px solid black;
+    width: 25px;
+    height: 25px;
+}
+
+.grid-item:nth-child(16n + 1) {
+    width: 100%;
+    border: 0;
+    height: 0;
+  }
