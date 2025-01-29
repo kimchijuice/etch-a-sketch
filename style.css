@@ -15,8 +15,13 @@ h1 {
 
 #container {
     display: flex;
-    flex-wrap: wrap;
-    width: 100v;
+    flex-direction: column;
+    margin: 20px auto;
+    
+}
+
+.grid-row {
+    display: flex;
     justify-content: center;
 }
 
@@ -24,10 +29,6 @@ h1 {
     border: 1px solid black;
     width: 25px;
     height: 25px;
+    box-sizing: border-box;
+    justify-content: center;
 }
-
-.grid-item:nth-child(16n + 1) {
-    width: 100%;
-    border: 0;
-    height: 0;
-  }
