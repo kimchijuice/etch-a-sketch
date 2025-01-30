@@ -1,3 +1,45 @@
+// Color palette
+const colors = {
+    'Bubble Gum': '#FFD1DC',
+    'Mint Dream': '#98FF98',
+    'Lavender Mist': '#E6E6FA',
+    'Peach Puff': '#FFDAB9',
+    'Sky Blue': '#87CEEB',
+    'Lemon Chiffon': '#FFFACD'
+};
+
+let currentColor = '#FFD1DC'; // Default color (Bubble Gum)
+
+// Function to create color picker
+function createColorPicker() {
+    const colorPicker = document.querySelector('#pick-a-color');
+    
+    Object.entries(colors).forEach(([name, color]) => {
+        const colorOption = document.createElement('div');
+        colorOption.className = 'color-option';
+        colorOption.style.backgroundColor = color;
+        colorOption.title = name;
+        
+        // Set initial selected state
+        if (color === currentColor) {
+            colorOption.classList.add('selected');
+        }
+        
+        colorOption.addEventListener('click', () => {
+            // Remove selected class from all options
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            colorOption.classList.add('selected');
+            currentColor = color;
+        });
+        
+        colorPicker.appendChild(colorOption);
+    });
+}
+
 // Function to create grid
 function createGrid(size) {
     const container = document.querySelector('#container');
@@ -6,11 +48,9 @@ function createGrid(size) {
     container.innerHTML = '';
     
     for (let i = 0; i < size; i++) {
-        // Create a row div
         const row = document.createElement('div');
         row.classList.add('grid-row');
         
-        // Create cells in each row
         for (let j = 0; j < size; j++) {
             const cell = document.createElement('div');
             cell.classList.add('grid-item');
@@ -20,28 +60,65 @@ function createGrid(size) {
         container.appendChild(row);
     }
     
-    // Re-add event listeners to new grid items
     setupGridEventListeners();
+}
+
+// Function to handle drawing on a cell
+function drawOnCell(cell) {
+    if (isDrawing) {
+        cell.style.backgroundColor = currentColor;
+    }
 }
 
 // Function to setup event listeners for grid items
 function setupGridEventListeners() {
     const gridItems = document.querySelectorAll('.grid-item');
-    let isDrawing = false;
 
     gridItems.forEach(item => {
-        item.addEventListener('click', () => {
+        // Mouse events
+        item.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevent unwanted drag effects
             isDrawing = !isDrawing;
-            item.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
+            drawOnCell(item);
         });
 
         item.addEventListener('mouseover', () => {
-            if (isDrawing) {
-                item.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
-            }
+            drawOnCell(item);
         });
+
+        // Touch events
+        item.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent scrolling while drawing
+            isDrawing = !isDrawing;
+            drawOnCell(item);
+        }, { passive: false });
+
+        item.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            // Get the touch position
+            const touch = e.touches[0];
+            // Get the element at the touch position
+            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+            // If the element is a grid item, draw on it
+            if (element && element.classList.contains('grid-item')) {
+                drawOnCell(element);
+            }
+        }, { passive: false });
+    });
+
+    // Add document-level touch end listener to handle cases where touch ends outside grid
+    document.addEventListener('touchend', () => {
+        isDrawing = false;
+    });
+
+    // Add document-level mouse up listener to handle cases where mouse is released outside grid
+    document.addEventListener('mouseup', () => {
+        isDrawing = false;
     });
 }
+
+// Initialize color picker
+createColorPicker();
 
 // Initial grid creation
 createGrid(16);
@@ -53,7 +130,6 @@ const gridSizeInput = document.querySelector('#gridSize');
 updateGridBtn.addEventListener('click', () => {
     const newSize = parseInt(gridSizeInput.value);
     
-    // Validate input
     if (isNaN(newSize)) {
         alert('Please enter a valid number');
         return;
