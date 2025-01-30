@@ -3,29 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dokdo&family=Fira+Code:wght@300..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>Etch a Sketch</title>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>Etch a Sketch</h1>
+        </header>
 
-    <h1>Etch a sketch</h1>
-    
-    <div id="menu">
-        <div id="instruction">
-            <p>To start drawing, click anywhere on the grid and begin drawing. Click again to stop.</p>
-            <h2>Set grid size</h2>
-        </div>
-        <div class="grid-controls">
-            <p>Enter a single number to define both width and height</p>
-            <input type="number" id="gridSize" placeholder="Width" min="1" max="100" value="16">
-            <button id="updateGrid">Update Grid</button>
-        </div>
-    </div>
+        <div class="content-wrapper">
+            <div class="controls-panel">
+                <div class="color-section">
+                    <h3>Pick a Color</h3>
+                    <div id="pick-a-color"></div>
+                </div>
 
-    <div id="main">
-        <div id="pick-a-color"></div>
-        <div id="container"></div>
-        <button id="clearButton">Clear Drawing</button>
+                <div class="grid-control-section">
+                    <h3>Grid Size</h3>
+                    <div class="grid-controls">
+                        <input type="number" id="gridSize" placeholder="16" min="1" max="100" value="16">
+                        <button id="updateGrid">Update Grid</button>
+                        <span class="size-hint">(1-100)</span>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="drawing-panel">
+                <div id="container"></div>
+            </div>
+
+            <div class="instructions-panel">
+                <h2>How to Use</h2>
+                <ol>
+                    <li>Choose a color from the palette</li>
+                    <li>Click or tap on the grid to start drawing</li>
+                    <li>Move your mouse/finger across the grid to draw</li>
+                    <li>Release mouse or lift finger to stop drawing</li>
+                </ol>
+                <div class="tip">
+                    <p>💡 For more details, increase the grid size!</p>
+                </div>
+                <button id="clearButton">Clear Drawing</button>
+            </div>
+        </div>
     </div>
     
     <script src="script.js"></script>
