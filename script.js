@@ -73,11 +73,18 @@ function drawOnCell(cell) {
 // Function to setup event listeners for grid items
 function setupGridEventListeners() {
     const gridItems = document.querySelectorAll('.grid-item');
+    let lastTap = 0; // For detecting double tap
 
     gridItems.forEach(item => {
         // Mouse events
         item.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // Prevent unwanted drag effects
+            e.preventDefault();
+            // Right click to erase
+            if (e.button === 2) { // 2 is right mouse button
+                item.style.backgroundColor = 'transparent';
+                return;
+            }
+            // Left click to draw
             isDrawing = !isDrawing;
             drawOnCell(item);
         });
@@ -86,32 +93,44 @@ function setupGridEventListeners() {
             drawOnCell(item);
         });
 
+        // Prevent context menu on right click
+        item.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
         // Touch events
         item.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent scrolling while drawing
+            e.preventDefault();
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            
+            // Detect double tap (if tap is within 300ms of last tap)
+            if (tapLength < 300 && tapLength > 0) {
+                item.style.backgroundColor = 'transparent';
+                lastTap = 0; // Reset to prevent triple-tap detection
+                return;
+            }
+            
+            lastTap = currentTime;
             isDrawing = !isDrawing;
             drawOnCell(item);
         }, { passive: false });
 
         item.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            // Get the touch position
             const touch = e.touches[0];
-            // Get the element at the touch position
             const element = document.elementFromPoint(touch.clientX, touch.clientY);
-            // If the element is a grid item, draw on it
             if (element && element.classList.contains('grid-item')) {
                 drawOnCell(element);
             }
         }, { passive: false });
     });
 
-    // Add document-level touch end listener to handle cases where touch ends outside grid
+    // Document level event listeners
     document.addEventListener('touchend', () => {
         isDrawing = false;
     });
 
-    // Add document-level mouse up listener to handle cases where mouse is released outside grid
     document.addEventListener('mouseup', () => {
         isDrawing = false;
     });
